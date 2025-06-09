@@ -42,7 +42,7 @@ Transform the raw xml payloads into clean JSON.
 **Permissions:**
 
 - **R**eads from `tmp/events.json`
-- **W**rites to `tmp/call-trace.txt`
+- **W**rites to `tmp/call-trace.csv`
 
 ```bash
 deno run analyze
