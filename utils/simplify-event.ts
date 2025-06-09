@@ -4,7 +4,7 @@
 export function simplifyEvent(evt: any): any {
   const out: Record<string, any> = {};
 
-  // capture root attributes if you want
+  // capture the event type
   if (evt.attributes?.["xsi1:type"]) {
     out.type = evt.attributes["xsi1:type"].split(":").pop();
   }
@@ -13,7 +13,15 @@ export function simplifyEvent(evt: any): any {
   for (const child of evt.children || []) {
     if (child.kind !== "REGULAR_TAG_NODE") continue;
     const key = stripNamespace(child.tagName);
+
+    if (child.attributes?.["xsi1:type"]) {
+      out["type"] = child.attributes["xsi1:type"].split(":").pop();
+
+    }
+
     out[key] = simplifyNode(child);
+      console.log(out)
+
   }
 
   return out;
@@ -36,9 +44,13 @@ function simplifyNode(node: any): any {
       // direct text under a tag: use it as if the tag has a single value
       buckets["_text"] = buckets["_text"] || [];
       buckets["_text"].push(ch.value);
-    } else if (ch.kind === "REGULAR_TAG_NODE" || ch.kind === "ORPHAN_TAG_NODE") {
+    } else if (
+      ch.kind === "REGULAR_TAG_NODE" || ch.kind === "ORPHAN_TAG_NODE"
+    ) {
       const k = stripNamespace(ch.tagName);
+
       buckets[k] = buckets[k] || [];
+
       buckets[k].push(simplifyNode(ch));
     }
   }

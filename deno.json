@@ -1,8 +1,9 @@
 {
   "tasks": {
-    "record": "deno run -WEN scripts/record-events.ts",
-    "transform": "deno run -RW scripts/transform-events.ts",
-    "convert": "deno run -RW scripts/convert-to-yaml.ts"
+    "analyze": "deno run -R scripts/analyze.ts",
+    "convert": "deno run -RW scripts/convert.ts",
+    "record": "deno run -WEN scripts/record.ts",
+    "transform": "deno run -RW scripts/transform.ts"
   },
   "imports": {
     "@eemeli/yaml": "jsr:@eemeli/yaml@^2.8.0",
