@@ -14,6 +14,8 @@ const eventTableData = new Set<{
     address: string;
     callType: "Network" | "Group";
   };
+  personality:string;
+  state:string;
 }>();
 
 for (const event of JSON.parse(events)) {
@@ -34,16 +36,20 @@ for (const event of JSON.parse(events)) {
       count: count,
       type: event.type,
       remoteParty: event.eventData.call.remoteParty,
+      state: event.eventData.call.state,
+      personality: event.eventData.call.personality
     });
   }
 }
 
-const maxTargetIdWidth = Math.max(
-  ...[...eventTableData.values()].map((e) => e.targetId.length),
-);
-const maxExtTrackingIdWidth = Math.max(
-  ...[...eventTableData.values()].map((e) => e.extTrackingId.length),
-);
+const maxWidth = (colName: string) => Math.max(
+  ...[...eventTableData.values()].map((e) => e[colName].length),
+)
+
+const maxExtTrackingIdWidth = maxWidth("extTrackingId");
+const maxTargetIdWidth = maxWidth("targetId");
+const maxCallEventTypeWidth = maxWidth("type");
+
 const filePath = "tmp/call-trace.csv";
 if (await exists(filePath)) {
   await Deno.remove(filePath);
@@ -56,6 +62,8 @@ const rowHeaders = [
   "Caller Address",
   "Event Count",
   "Call Event Type",
+  "Call State",
+  "Call Personality"
 ];
 
 await Deno.writeTextFile(filePath, rowHeaders.join(",") + "\n", {
@@ -63,16 +71,17 @@ await Deno.writeTextFile(filePath, rowHeaders.join(",") + "\n", {
 });
 
 for (
-  const { extTrackingId, count, type, targetId, remoteParty } of eventTableData
+  const { extTrackingId, count, type, targetId, remoteParty,state,personality } of eventTableData
     .values()
 ) {
   const rowParts = [
     extTrackingId.padEnd(maxExtTrackingIdWidth),
     targetId.padEnd(maxTargetIdWidth),
     remoteParty.callType.padEnd(7),
-    remoteParty.address.padEnd(16),
+    remoteParty.address.padEnd(42),
     count,
-    type.replace("Call", "Call ").replace("Event", ""),
+    type.replace("Call", "Call ").replace("Event", "").padEnd(maxCallEventTypeWidth),
+    personality, state
   ];
   const row = rowParts.join(",") + "\n";
 
