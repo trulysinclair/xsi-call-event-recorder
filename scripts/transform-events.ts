@@ -1,13 +1,12 @@
-import * as xml_parser from "jsr:@melvdouc/xml-parser";
+import * as xml_parser from "@melvdouc/xml-parser";
+import {simplifyEvent} from "../utils/simplify-event.ts";
 
-const xml = await Deno.readTextFile("events.txt");
+const xml = await Deno.readTextFile("tmp/raw.txt");
 
 // convert xml to nested node array
 const nodes = xml_parser.parse(xml).filter((node) =>
   // remove separators
   {
-    node.kind === "TEXT_NODE" && node.value.includes("====") ? undefined : node;
-
     switch (node.kind) {
       case "TEXT_NODE":
         return node.value.includes("====") ? undefined : node;
@@ -19,7 +18,8 @@ const nodes = xml_parser.parse(xml).filter((node) =>
   }
 );
 
-const result = JSON.stringify(nodes, null, 2);
+const events = nodes.map((event) => simplifyEvent(event));
+const result = JSON.stringify(events, null, 2);
 
 // write new structure into fresh array
-await Deno.writeTextFile("events.json", result);
+await Deno.writeTextFile("tmp/events.json", result);

@@ -1,3 +1,5 @@
 .env
-events.json
-events.txt
+tmp/events.json
+tmp/events.txt
+tmp
+.idea

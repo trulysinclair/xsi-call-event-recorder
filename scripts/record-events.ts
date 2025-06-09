@@ -1,4 +1,5 @@
-import { Buffer } from "node:buffer";
+import {exists,} from '@std/fs'
+import {Buffer} from "node:buffer";
 
 const XSI_USERNAME = Deno.env.get("XSI_USERNAME");
 const XSI_PASSWORD = Deno.env.get("XSI_PASSWORD");
@@ -10,9 +11,11 @@ const requestSubscription = (userId: string) =>
     `https://${XSI_HOSTNAME}/com.broadsoft.xsi-events/v2.0/user/${userId}`,
     {
       headers: {
-        Authorization: `Basic ${Buffer.from(
-          `${XSI_USERNAME}:${XSI_PASSWORD}`
-        ).toString("base64")}`,
+        Authorization: `Basic ${
+          Buffer.from(
+            `${XSI_USERNAME}:${XSI_PASSWORD}`,
+          ).toString("base64")
+        }`,
         "Content-Type": "application/json",
         Accept: "application/json",
       },
@@ -47,7 +50,7 @@ const requestSubscription = (userId: string) =>
           },
         },
       }),
-    }
+    },
   );
 
 for (const arg of Deno.args) {
@@ -72,7 +75,11 @@ Deno.serve(async (req) => {
     const separator = new Array(80).fill("=").join("") + "\n";
     const text = await req.text();
 
-    await Deno.writeTextFile("events.txt", separator + text + "\n", {
+    if (!await exists("tmp")) {
+      await Deno.mkdir("tmp");
+    }
+
+    await Deno.writeTextFile("tmp/raw.txt", separator + text + "\n", {
       append: true,
     });
   }

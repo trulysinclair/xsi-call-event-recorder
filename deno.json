@@ -1,0 +1,13 @@
+{
+  "tasks": {
+    "record": "deno run -WEN scripts/record-events.ts",
+    "transform": "deno run -RW scripts/transform-events.ts",
+    "to-yaml": "deno run -RW scripts/convert-to-yaml.ts"
+  },
+  "imports": {
+    "@eemeli/yaml": "jsr:@eemeli/yaml@^2.8.0",
+    "@melvdouc/xml-parser": "jsr:@melvdouc/xml-parser@^0.1.1",
+    "@std/assert": "jsr:@std/assert@1",
+    "@std/fs": "jsr:@std/fs@^1.0.18"
+  }
+}
