@@ -1,6 +1,6 @@
 {
   "tasks": {
-    "analyze": "deno run -R scripts/analyze.ts",
+    "analyze": "deno run -RW scripts/analyze.ts",
     "convert": "deno run -RW scripts/convert.ts",
     "record": "deno run -WEN scripts/record.ts",
     "transform": "deno run -RW scripts/transform.ts"

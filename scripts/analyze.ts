@@ -1,3 +1,5 @@
+import {exists} from "@std/fs";
+
 const events = await Deno.readTextFile("tmp/events.json");
 
 const callEventCounter = new Map<string, number>();
@@ -7,6 +9,11 @@ const eventTableData = new Set<{
   targetId: string;
   count: number;
   type: string;
+  remoteParty: {
+    name?: string;
+    address: string;
+    callType: "Network" | "Group";
+  };
 }>();
 
 for (const event of JSON.parse(events)) {
@@ -26,6 +33,7 @@ for (const event of JSON.parse(events)) {
       targetId: event.targetId,
       count: count,
       type: event.type,
+      remoteParty: event.eventData.call.remoteParty,
     });
   }
 }
@@ -35,10 +43,38 @@ const maxTargetIdWidth = Math.max(
 );
 const maxExtTrackingIdWidth = Math.max(
   ...[...eventTableData.values()].map((e) => e.extTrackingId.length),
-)
+);
+const filePath = "tmp/call-trace.csv";
+if (await exists(filePath)) {
+  await Deno.remove(filePath);
+}
 
-for (const {extTrackingId,count,type,targetId} of eventTableData.values()) {
-  console.log(
-    `[${targetId.padEnd(maxTargetIdWidth)}] ${extTrackingId.padEnd(maxExtTrackingIdWidth)} (${count}) -> ${type.replace("Call","Call ").replace("Event","")}`,
-  );
+const rowHeaders = [
+  "ExtTrackingId",
+  "TargetId",
+  "Caller Type",
+  "Caller Address",
+  "Event Count",
+  "Call Event Type",
+];
+
+await Deno.writeTextFile(filePath, rowHeaders.join(",") + "\n", {
+  append: true,
+});
+
+for (
+  const { extTrackingId, count, type, targetId, remoteParty } of eventTableData
+    .values()
+) {
+  const rowParts = [
+    extTrackingId.padEnd(maxExtTrackingIdWidth),
+    targetId.padEnd(maxTargetIdWidth),
+    remoteParty.callType.padEnd(7),
+    remoteParty.address.padEnd(16),
+    count,
+    type.replace("Call", "Call ").replace("Event", ""),
+  ];
+  const row = rowParts.join(",") + "\n";
+
+  await Deno.writeTextFile(filePath, row, { append: true });
 }

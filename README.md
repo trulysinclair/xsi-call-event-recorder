@@ -6,6 +6,7 @@ You can do the following:
 
 1. [Record Events](#1-record-events)
 2. [Transform Events](#2-transform-events)
+3. [Analyze Events]()
 
 ## 1. Record Events
 
@@ -34,7 +35,20 @@ Transform the raw xml payloads into clean JSON.
 deno run transform
 ```
 
-## 3. Convert to YAML (optional)
+## 3. Analyze Events
+
+Transform the raw xml payloads into clean JSON.
+
+**Permissions:**
+
+- **R**eads from `tmp/events.json`
+- **W**rites to `tmp/call-trace.txt`
+
+```bash
+deno run analyze
+```
+
+## 4. Convert to YAML (optional)
 
 If you feel like YAML is more usable.
 
