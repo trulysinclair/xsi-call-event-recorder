@@ -13,23 +13,36 @@ Record raw event data to a plain text file, each event split by a separator for 
 
 **Permissions:**
 
-- **W**rites to `events.txt`
+- **W**rites to `tmp/events.txt`
 - **E**nv variables: `XSI_HOSTNAME`, `XSI_USERNAME`, `XSI_PASSWORD`, `HTTP_CONTACT`
 - **N**etwork request to the XSI server at `https://${XSI_HOSTNAME}/com.broadsoft.xsi-events/v2.0/user/${userId}`
 
 ```bash
-deno -WEN ./record-events.ts wile.e.coyote@acme.com
+deno record wile.e.coyote@acme.com
 ```
 
 ## 2. Transform Events
 
-Transform the raw xml payloads into something more useable.
+Transform the raw xml payloads into clean JSON.
 
 **Permissions:**
 
-- **R**eads from `events.txt`
-- **W**rites to `events.json`
+- **R**eads from `tmp/events.txt`
+- **W**rites to `tmp/events.json`
 
 ```bash
-deno -RW ./transform-events.ts
+deno transform
+```
+
+## 3. Convert to YAML (optional)
+
+If you feel like YAML is more usable.
+
+**Permissions:**
+
+- **R**eads from `tmp/events.json`
+- **W**rites to `tmp/events.yml`
+
+```bash
+deno convert
 ```

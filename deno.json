@@ -2,7 +2,7 @@
   "tasks": {
     "record": "deno run -WEN scripts/record-events.ts",
     "transform": "deno run -RW scripts/transform-events.ts",
-    "to-yaml": "deno run -RW scripts/convert-to-yaml.ts"
+    "convert": "deno run -RW scripts/convert-to-yaml.ts"
   },
   "imports": {
     "@eemeli/yaml": "jsr:@eemeli/yaml@^2.8.0",
